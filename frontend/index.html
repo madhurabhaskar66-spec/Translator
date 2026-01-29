@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>English to Kannada Translator</title>
+    <title>Universal Translator - Multi-Language Voice & Text</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -11,47 +12,129 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark: #1f2937;
+            --light: #f9fafb;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
             padding: 20px;
         }
 
-        .container {
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 0 20px;
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+
+        .navbar-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .navbar-subtitle {
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 100px auto 30px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            max-width: 900px;
-            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
             color: white;
-            padding: 40px 20px;
+            padding: 50px 30px;
             text-align: center;
         }
 
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
         }
 
         .header p {
             font-size: 1.1em;
-            opacity: 0.9;
+            opacity: 0.95;
+        }
+
+        .mode-selector {
+            background: white;
+            padding: 25px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #555;
+        }
+
+        .mode-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-color: var(--primary-color);
         }
 
         .content {
             padding: 40px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
+            gap: 40px;
         }
 
         .section {
@@ -59,48 +142,95 @@
             flex-direction: column;
         }
 
-        .section h2 {
-            color: #333;
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 15px;
-            font-size: 1.3em;
         }
 
-        .section label {
-            color: #555;
-            font-weight: 500;
-            margin-bottom: 8px;
-            display: block;
+        .section-label h2 {
+            color: #333;
+            font-size: 1.3em;
+            margin: 0;
+        }
+
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .language-select {
+            flex: 1;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            background: white;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .language-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .language-select:hover {
+            border-color: var(--primary-color);
+        }
+
+        .textarea-wrapper {
+            position: relative;
         }
 
         textarea {
+            width: 100%;
             padding: 15px;
             border: 2px solid #e0e0e0;
-            border-radius: 5px;
+            border-radius: 10px;
             font-size: 1em;
             font-family: inherit;
             resize: vertical;
-            min-height: 150px;
-            transition: border-color 0.3s;
+            min-height: 180px;
+            transition: all 0.3s;
+            background: #fafafa;
         }
 
         textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 5px rgba(102, 126, 234, 0.1);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            background: white;
+        }
+
+        textarea:readonly {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .char-count {
+            font-size: 0.85em;
+            color: #999;
+            margin-top: 8px;
+            text-align: right;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
 
         button {
-            padding: 12px 24px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 5px;
-            font-size: 1em;
+            border-radius: 10px;
+            font-size: 0.95em;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
@@ -108,75 +238,100 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-        }
-
-        .btn-translate {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
             flex: 1;
-            min-width: 150px;
+            min-width: 140px;
         }
 
-        .btn-translate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-translate:active {
-            transform: translateY(0);
-        }
-
-        .btn-speak {
-            background: #4CAF50;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            flex: 1;
-            min-width: 150px;
         }
 
-        .btn-speak:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
         }
 
-        .btn-copy {
-            background: #2196F3;
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--success-color), #34d399);
             color: white;
-            flex: 1;
-            min-width: 150px;
         }
 
-        .btn-copy:hover {
-            background: #0b7dda;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4);
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
         }
 
-        .btn-clear {
-            background: #ff9800;
+        .btn-secondary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #10b981;
             color: white;
-            flex: 1;
-            min-width: 150px;
         }
 
-        .btn-clear:hover {
-            background: #e68900;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(255, 152, 0, 0.4);
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-info {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .loading {
             display: none;
             text-align: center;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
+            border: 3px solid #f0f0f0;
+            border-top: 3px solid var(--primary-color);
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
@@ -187,40 +342,121 @@
         }
 
         .message {
-            padding: 12px;
-            border-radius: 5px;
+            padding: 15px;
+            border-radius: 10px;
             margin-top: 15px;
             display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.success {
-            background: #c8e6c9;
-            color: #2e7d32;
-            border: 1px solid #4caf50;
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #6ee7b7;
             display: block;
         }
 
         .message.error {
-            background: #ffcdd2;
-            color: #c62828;
-            border: 1px solid #f44336;
+            background: #fee2e2;
+            color: #7f1d1d;
+            border: 1px solid #fca5a5;
             display: block;
         }
 
-        .char-count {
-            font-size: 0.85em;
-            color: #999;
-            margin-top: 8px;
+        .message.info {
+            background: #dbeafe;
+            color: #1e3a8a;
+            border: 1px solid #93c5fd;
+            display: block;
         }
 
-        @media (max-width: 768px) {
+        .translation-info {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 15px;
+            padding: 12px;
+            background: #f9fafb;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 5px;
+            display: none;
+        }
+
+        .translation-info.show {
+            display: block;
+        }
+
+        .recording-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+
+        .recording-dot {
+            width: 8px;
+            height: 8px;
+            background: #dc2626;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .section-divider {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+            margin: 20px 0;
+        }
+
+        @media (max-width: 1024px) {
             .content {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 30px;
             }
 
             .header h1 {
-                font-size: 1.8em;
+                font-size: 2em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .content {
+                padding: 20px;
+                gap: 20px;
             }
 
             .button-group {
@@ -230,62 +466,221 @@
             button {
                 width: 100%;
             }
+
+            .mode-selector {
+                flex-direction: column;
+            }
+
+            .mode-btn {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
-        .translation-info {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 10px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 5px;
-            display: none;
+        .swap-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: all 0.3s;
+            align-self: center;
+            margin: 20px 0;
         }
 
-        .translation-info.show {
-            display: block;
+        .swap-btn:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+
+        @media (max-width: 1024px) {
+            .swap-btn {
+                display: none;
+            }
+        }
+
+        .feature-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="navbar-content">
+            <div>
+                <div class="navbar-title">🌍 Universal Translator</div>
+                <div class="navbar-subtitle">Voice • Text • Multi-Language</div>
+            </div>
+            <div style="color: #999; font-size: 0.9em;">
+                <i class="fas fa-server"></i> Connected
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
         <div class="header">
-            <h1>🌐 English to Kannada Translator</h1>
-            <p>Translate and Listen</p>
+            <h1>
+                <i class="fas fa-globe"></i>
+                Universal Translator
+                <span class="feature-badge">PRO</span>
+            </h1>
+            <p>Translate text and speech in real-time across 20+ languages</p>
         </div>
 
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <button class="mode-btn active" onclick="switchMode('text-to-text')">
+                <i class="fas fa-text-width"></i> Text to Text
+            </button>
+            <button class="mode-btn" onclick="switchMode('voice-to-text')">
+                <i class="fas fa-microphone"></i> Voice to Text
+            </button>
+            <button class="mode-btn" onclick="switchMode('voice-to-voice')">
+                <i class="fas fa-volume-up"></i> Voice to Voice
+            </button>
+        </div>
+
+        <!-- Content -->
         <div class="content">
-            <!-- English Input Section -->
+            <!-- Source Section -->
             <div class="section">
-                <h2>English</h2>
-                <label for="english-text">Enter English Text:</label>
-                <textarea id="english-text" placeholder="Enter English text here..."></textarea>
-                <div class="char-count"><span id="english-count">0</span> characters</div>
-                <div class="button-group">
-                    <button class="btn-translate" onclick="translateText()">🔄 Translate</button>
-                    <button class="btn-speak" onclick="speakEnglish()">🔊 Speak</button>
+                <div class="section-label">
+                    <h2>Source</h2>
                 </div>
-                <div class="loading" id="loading-english">
+                
+                <label style="color: #666; font-weight: 500; margin-bottom: 10px;">Select Source Language</label>
+                <select class="language-select" id="source-lang" onchange="updateLanguageDisplay()">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi (हिंदी)</option>
+                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                    <option value="ta">Tamil (தமிழ்)</option>
+                    <option value="te">Telugu (తెలుగు)</option>
+                    <option value="ml">Malayalam (മലയാളം)</option>
+                    <option value="mr">Marathi (मराठी)</option>
+                    <option value="gu">Gujarati (ગુજરાતી)</option>
+                    <option value="bn">Bengali (বাংলা)</option>
+                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="it">Italian</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="ru">Russian</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                    <option value="ko">Korean</option>
+                </select>
+
+                <div class="textarea-wrapper" style="margin-top: 15px;">
+                    <textarea id="source-text" placeholder="Enter text here or record your voice..." data-mode="text-to-text"></textarea>
+                    <div class="char-count"><span id="source-count">0</span> characters</div>
+                </div>
+
+                <div class="button-group" id="source-buttons">
+                    <button class="btn-primary" onclick="translateText()" id="btn-translate">
+                        <i class="fas fa-exchange-alt"></i> Translate
+                    </button>
+                    <button class="btn-secondary" onclick="speakSource()">
+                        <i class="fas fa-volume-up"></i> Speak
+                    </button>
+                </div>
+
+                <div id="voice-buttons" style="display: none;">
+                    <div class="button-group">
+                        <button class="btn-warning" id="record-btn" onclick="toggleRecording()">
+                            <i class="fas fa-microphone"></i> Start Recording
+                        </button>
+                        <button class="btn-danger" onclick="clearAll()">
+                            <i class="fas fa-trash"></i> Clear
+                        </button>
+                    </div>
+                    <div id="recording-indicator" style="display: none; margin-top: 15px;">
+                        <div class="recording-indicator">
+                            <div class="recording-dot"></div>
+                            Recording...
+                        </div>
+                    </div>
+                </div>
+
+                <div class="loading" id="loading-source">
                     <div class="spinner"></div>
                 </div>
-                <div class="message" id="message-english"></div>
+                <div class="message" id="message-source"></div>
             </div>
 
-            <!-- Kannada Output Section -->
+            <!-- Swap Button (Desktop only) -->
+            <button class="swap-btn" onclick="swapLanguages()" title="Swap languages">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+
+            <!-- Target Section -->
             <div class="section">
-                <h2>ಕನ್ನಡ (Kannada)</h2>
-                <label for="kannada-text">Kannada Translation:</label>
-                <textarea id="kannada-text" placeholder="Translation will appear here..." readonly></textarea>
-                <div class="char-count"><span id="kannada-count">0</span> characters</div>
-                <div class="button-group">
-                    <button class="btn-speak" onclick="speakKannada()">🔊 Speak</button>
-                    <button class="btn-copy" onclick="copyToClipboard()">📋 Copy</button>
-                    <button class="btn-clear" onclick="clearAll()">🗑️ Clear</button>
+                <div class="section-label">
+                    <h2>Target</h2>
                 </div>
-                <div class="loading" id="loading-kannada">
+                
+                <label style="color: #666; font-weight: 500; margin-bottom: 10px;">Select Target Language</label>
+                <select class="language-select" id="target-lang" onchange="updateLanguageDisplay()">
+                    <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                    <option value="en">English</option>
+                    <option value="hi">Hindi (हिंदी)</option>
+                    <option value="ta">Tamil (தமிழ்)</option>
+                    <option value="te">Telugu (తెలుగు)</option>
+                    <option value="ml">Malayalam (മലയാളം)</option>
+                    <option value="mr">Marathi (मराठी)</option>
+                    <option value="gu">Gujarati (ગુજરાતી)</option>
+                    <option value="bn">Bengali (বাংলা)</option>
+                    <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <option value="de">German</option>
+                    <option value="it">Italian</option>
+                    <option value="pt">Portuguese</option>
+                    <option value="ru">Russian</option>
+                    <option value="ja">Japanese</option>
+                    <option value="zh">Chinese</option>
+                    <option value="ko">Korean</option>
+                </select>
+
+                <div class="textarea-wrapper" style="margin-top: 15px;">
+                    <textarea id="target-text" placeholder="Translation will appear here..." readonly></textarea>
+                    <div class="char-count"><span id="target-count">0</span> characters</div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-secondary" onclick="speakTarget()">
+                        <i class="fas fa-volume-up"></i> Speak
+                    </button>
+                    <button class="btn-success" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="btn-info" onclick="downloadTranslation()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="btn-danger" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+
+                <div class="loading" id="loading-target">
                     <div class="spinner"></div>
                 </div>
-                <div class="message" id="message-kannada"></div>
+                <div class="message" id="message-target"></div>
                 <div class="translation-info" id="translation-info"></div>
             </div>
         </div>
@@ -293,26 +688,173 @@
 
     <script>
         const API_URL = 'http://127.0.0.1:5000';
+        let currentMode = 'text-to-text';
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+        let recognitionActive = false;
 
-        // Update character count
-        document.getElementById('english-text').addEventListener('input', function() {
-            document.getElementById('english-count').textContent = this.value.length;
+        // Speech Recognition API
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+        }
+
+        // Initialize character counters
+        document.getElementById('source-text').addEventListener('input', function() {
+            document.getElementById('source-count').textContent = this.value.length;
         });
 
-        document.getElementById('kannada-text').addEventListener('input', function() {
-            document.getElementById('kannada-count').textContent = this.value.length;
+        document.getElementById('target-text').addEventListener('input', function() {
+            document.getElementById('target-count').textContent = this.value.length;
         });
 
-        async function translateText() {
-            const englishText = document.getElementById('english-text').value.trim();
+        // Mode switching
+        function switchMode(mode) {
+            currentMode = mode;
             
-            if (!englishText) {
-                showMessage('message-english', 'Please enter some English text', 'error');
+            // Update buttons
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.mode-btn').classList.add('active');
+
+            const sourceButtons = document.getElementById('source-buttons');
+            const voiceButtons = document.getElementById('voice-buttons');
+            const sourceText = document.getElementById('source-text');
+
+            if (mode === 'text-to-text') {
+                sourceButtons.style.display = 'flex';
+                voiceButtons.style.display = 'none';
+                sourceText.placeholder = 'Enter text here...';
+                sourceText.readOnly = false;
+            } else if (mode === 'voice-to-text') {
+                sourceButtons.style.display = 'none';
+                voiceButtons.style.display = 'block';
+                sourceText.placeholder = 'Your voice will be transcribed here...';
+                sourceText.readOnly = true;
+            } else if (mode === 'voice-to-voice') {
+                sourceButtons.style.display = 'none';
+                voiceButtons.style.display = 'block';
+                sourceText.placeholder = 'Your voice will be transcribed and translated...';
+                sourceText.readOnly = true;
+            }
+
+            clearAll();
+        }
+
+        // Voice Recording & Recognition
+        function toggleRecording() {
+            const btn = document.getElementById('record-btn');
+            const indicator = document.getElementById('recording-indicator');
+
+            if (!isRecording) {
+                startRecording();
+                btn.textContent = '⏹️ Stop Recording';
+                btn.classList.remove('btn-warning');
+                btn.classList.add('btn-danger');
+                indicator.style.display = 'block';
+                isRecording = true;
+            } else {
+                stopRecording();
+                btn.textContent = '🎤 Start Recording';
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-warning');
+                indicator.style.display = 'none';
+                isRecording = false;
+            }
+        }
+
+        function startRecording() {
+            if (!recognition) {
+                showMessage('message-source', 'Speech Recognition not supported in your browser', 'error');
                 return;
             }
 
-            showLoading('loading-kannada', true);
-            hideMessage('message-kannada');
+            audioChunks = [];
+            const sourceLang = document.getElementById('source-lang').value;
+            
+            // Map our language codes to browser language codes
+            const langMap = {
+                'en': 'en-US',
+                'hi': 'hi-IN',
+                'kn': 'kn-IN',
+                'ta': 'ta-IN',
+                'te': 'te-IN',
+                'ml': 'ml-IN',
+                'mr': 'mr-IN',
+                'gu': 'gu-IN',
+                'bn': 'bn-IN',
+                'pa': 'pa-IN',
+                'es': 'es-ES',
+                'fr': 'fr-FR',
+                'de': 'de-DE',
+                'it': 'it-IT',
+                'pt': 'pt-PT',
+                'ru': 'ru-RU',
+                'ja': 'ja-JP',
+                'zh': 'zh-CN',
+                'ko': 'ko-KR'
+            };
+
+            recognition.lang = langMap[sourceLang] || 'en-US';
+
+            recognition.onstart = () => {
+                recognitionActive = true;
+            };
+
+            recognition.onresult = (event) => {
+                let transcript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    transcript += event.results[i][0].transcript;
+                }
+                document.getElementById('source-text').value = transcript;
+                document.getElementById('source-count').textContent = transcript.length;
+            };
+
+            recognition.onerror = (event) => {
+                showMessage('message-source', `Speech recognition error: ${event.error}`, 'error');
+            };
+
+            recognition.onend = () => {
+                recognitionActive = false;
+                if (currentMode === 'voice-to-voice') {
+                    const sourceText = document.getElementById('source-text').value;
+                    if (sourceText.trim()) {
+                        translateText();
+                    }
+                }
+            };
+
+            recognition.start();
+        }
+
+        function stopRecording() {
+            if (recognition) {
+                recognition.stop();
+            }
+        }
+
+        // Translation
+        async function translateText() {
+            const sourceText = document.getElementById('source-text').value.trim();
+            const sourceLang = document.getElementById('source-lang').value;
+            const targetLang = document.getElementById('target-lang').value;
+
+            if (!sourceText) {
+                showMessage('message-source', 'Please enter or record some text', 'error');
+                return;
+            }
+
+            if (sourceLang === targetLang) {
+                showMessage('message-target', 'Source and target languages must be different', 'error');
+                return;
+            }
+
+            showLoading('loading-target', true);
+            hideMessage('message-target');
 
             try {
                 const response = await fetch(`${API_URL}/translate`, {
@@ -321,7 +863,9 @@
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        text: englishText
+                        text: sourceText,
+                        source_lang: sourceLang,
+                        target_lang: targetLang
                     }),
                     mode: 'cors'
                 });
@@ -331,94 +875,169 @@
                 }
 
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    document.getElementById('kannada-text').value = data.kannada;
-                    document.getElementById('kannada-count').textContent = data.kannada.length;
-                    showMessage('message-kannada', '✓ Translation successful', 'success');
-                    
+                    document.getElementById('target-text').value = data.translated;
+                    document.getElementById('target-count').textContent = data.translated.length;
+                    showMessage('message-target', '✓ Translation successful', 'success');
+
                     const infoDiv = document.getElementById('translation-info');
-                    infoDiv.textContent = `Translated from English to Kannada`;
+                    infoDiv.textContent = `📖 ${data.source_language} → ${data.target_language}`;
                     infoDiv.classList.add('show');
+
+                    if (currentMode === 'voice-to-voice') {
+                        setTimeout(() => speakTarget(), 500);
+                    }
                 } else {
-                    showMessage('message-kannada', 'Translation failed: ' + (data.error || 'Unknown error'), 'error');
+                    showMessage('message-target', 'Translation failed: ' + (data.error || 'Unknown error'), 'error');
                 }
             } catch (error) {
                 console.error('Translation error:', error);
-                showMessage('message-kannada', 'Error: ' + error.message + '. Make sure the backend server is running on http://127.0.0.1:5000', 'error');
+                showMessage('message-target', 'Error: ' + error.message, 'error');
             } finally {
-                showLoading('loading-kannada', false);
+                showLoading('loading-target', false);
             }
         }
 
-        function speakEnglish() {
-            const text = document.getElementById('english-text').value.trim();
+        // Text to Speech
+        function speakSource() {
+            const text = document.getElementById('source-text').value.trim();
+            const lang = document.getElementById('source-lang').value;
             if (!text) {
-                showMessage('message-english', 'Please enter some English text', 'error');
+                showMessage('message-source', 'Please enter or record some text', 'error');
                 return;
             }
-            speak(text, 'en-US');
+            speak(text, lang);
         }
 
-        function speakKannada() {
-            const text = document.getElementById('kannada-text').value.trim();
+        function speakTarget() {
+            const text = document.getElementById('target-text').value.trim();
+            const lang = document.getElementById('target-lang').value;
             if (!text) {
-                showMessage('message-kannada', 'Please translate or enter Kannada text', 'error');
+                showMessage('message-target', 'Please translate first or enter text', 'error');
                 return;
             }
-            speak(text, 'kn-IN');
+            speak(text, lang);
         }
 
-        function speak(text, language) {
-            // Cancel any ongoing speech
+        function speak(text, langCode) {
             window.speechSynthesis.cancel();
 
+            const langMap = {
+                'en': 'en-US',
+                'hi': 'hi-IN',
+                'kn': 'kn-IN',
+                'ta': 'ta-IN',
+                'te': 'te-IN',
+                'ml': 'ml-IN',
+                'mr': 'mr-IN',
+                'gu': 'gu-IN',
+                'bn': 'bn-IN',
+                'pa': 'pa-IN',
+                'es': 'es-ES',
+                'fr': 'fr-FR',
+                'de': 'de-DE',
+                'it': 'it-IT',
+                'pt': 'pt-PT',
+                'ru': 'ru-RU',
+                'ja': 'ja-JP',
+                'zh': 'zh-CN',
+                'ko': 'ko-KR'
+            };
+
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = language;
-            utterance.rate = 0.9;
+            utterance.lang = langMap[langCode] || 'en-US';
+            utterance.rate = 0.95;
             utterance.pitch = 1.0;
             utterance.volume = 1.0;
 
-            utterance.onstart = function() {
-                console.log('Speech started');
-            };
-
-            utterance.onend = function() {
-                console.log('Speech ended');
-            };
-
-            utterance.onerror = function(event) {
+            utterance.onerror = (event) => {
                 console.error('Speech error:', event.error);
-                showMessage('message-kannada', 'Text-to-Speech error: ' + event.error, 'error');
             };
 
             window.speechSynthesis.speak(utterance);
         }
 
+        // Utility Functions
+        function swapLanguages() {
+            const source = document.getElementById('source-lang').value;
+            const target = document.getElementById('target-lang').value;
+            
+            document.getElementById('source-lang').value = target;
+            document.getElementById('target-lang').value = source;
+            
+            const sourceText = document.getElementById('source-text').value;
+            const targetText = document.getElementById('target-text').value;
+            
+            document.getElementById('source-text').value = targetText;
+            document.getElementById('target-text').value = sourceText;
+            
+            document.getElementById('source-count').textContent = targetText.length;
+            document.getElementById('target-count').textContent = sourceText.length;
+        }
+
         function copyToClipboard() {
-            const text = document.getElementById('kannada-text').value;
+            const text = document.getElementById('target-text').value;
             if (!text) {
-                showMessage('message-kannada', 'No text to copy', 'error');
+                showMessage('message-target', 'No text to copy', 'error');
                 return;
             }
 
             navigator.clipboard.writeText(text).then(() => {
-                showMessage('message-kannada', '✓ Copied to clipboard', 'success');
-                setTimeout(() => hideMessage('message-kannada'), 2000);
+                showMessage('message-target', '✓ Copied to clipboard', 'success');
+                setTimeout(() => hideMessage('message-target'), 2000);
             }).catch(() => {
-                showMessage('message-kannada', 'Failed to copy', 'error');
+                showMessage('message-target', 'Failed to copy', 'error');
             });
         }
 
+        function downloadTranslation() {
+            const sourceText = document.getElementById('source-text').value;
+            const targetText = document.getElementById('target-text').value;
+            const sourceLang = document.getElementById('source-lang').value;
+            const targetLang = document.getElementById('target-lang').value;
+
+            if (!sourceText || !targetText) {
+                showMessage('message-target', 'Nothing to download', 'error');
+                return;
+            }
+
+            const content = `TRANSLATION REPORT\n${'='.repeat(50)}\n\nSource Language: ${sourceLang.toUpperCase()}\nTarget Language: ${targetLang.toUpperCase()}\n\n${'-'.repeat(50)}\nSOURCE TEXT:\n${'-'.repeat(50)}\n${sourceText}\n\n${'-'.repeat(50)}\nTRANSLATED TEXT:\n${'-'.repeat(50)}\n${targetText}\n\n${'-'.repeat(50)}\nGenerated: ${new Date().toLocaleString()}`;
+
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `translation_${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            showMessage('message-target', '✓ Translation downloaded', 'success');
+            setTimeout(() => hideMessage('message-target'), 2000);
+        }
+
         function clearAll() {
-            document.getElementById('english-text').value = '';
-            document.getElementById('kannada-text').value = '';
-            document.getElementById('english-count').textContent = '0';
-            document.getElementById('kannada-count').textContent = '0';
-            hideMessage('message-english');
-            hideMessage('message-kannada');
+            document.getElementById('source-text').value = '';
+            document.getElementById('target-text').value = '';
+            document.getElementById('source-count').textContent = '0';
+            document.getElementById('target-count').textContent = '0';
+            hideMessage('message-source');
+            hideMessage('message-target');
             document.getElementById('translation-info').classList.remove('show');
             window.speechSynthesis.cancel();
+            
+            if (isRecording) {
+                stopRecording();
+                document.getElementById('record-btn').textContent = '🎤 Start Recording';
+                document.getElementById('recording-indicator').style.display = 'none';
+                isRecording = false;
+            }
+        }
+
+        function updateLanguageDisplay() {
+            // Update language displays
         }
 
         function showLoading(elementId, show) {
@@ -435,14 +1054,14 @@
             document.getElementById(elementId).className = 'message';
         }
 
-        // Keyboard shortcut: Ctrl+Enter to translate
-        document.getElementById('english-text').addEventListener('keydown', function(e) {
+        // Keyboard shortcuts
+        document.getElementById('source-text').addEventListener('keydown', function(e) {
             if (e.ctrlKey && e.key === 'Enter') {
                 translateText();
             }
         });
 
-        // Check if backend is available on page load
+        // Check backend on load
         window.addEventListener('load', function() {
             checkBackendConnection();
         });
@@ -452,14 +1071,14 @@
                 .then(response => {
                     if (response.ok) {
                         console.log('✓ Backend connected successfully');
-                        hideMessage('message-kannada');
+                        showMessage('message-target', 'Serving HTTP on 0.0.0.0 port 8000 ✅', 'success');
                     } else {
-                        throw new Error('Backend returned error');
+                        throw new Error('Backend error');
                     }
                 })
                 .catch(error => {
                     console.error('Backend connection error:', error);
-                    showMessage('message-kannada', '⚠️ Backend server not connected. Trying to connect to http://127.0.0.1:5000...', 'error');
+                    showMessage('message-target', '⚠️ Cannot connect to backend. Make sure the server is running on port 5000', 'error');
                 });
         }
     </script>

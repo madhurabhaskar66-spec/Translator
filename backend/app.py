@@ -9,35 +9,67 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
+# Supported languages with their codes
+SUPPORTED_LANGUAGES = {
+    'en': 'English',
+    'hi': 'Hindi',
+    'ta': 'Tamil',
+    'te': 'Telugu',
+    'kn': 'Kannada',
+    'ml': 'Malayalam',
+    'mr': 'Marathi',
+    'gu': 'Gujarati',
+    'bn': 'Bengali',
+    'pa': 'Punjabi',
+    'es': 'Spanish',
+    'fr': 'French',
+    'de': 'German',
+    'it': 'Italian',
+    'pt': 'Portuguese',
+    'ru': 'Russian',
+    'ja': 'Japanese',
+    'zh': 'Chinese',
+    'ko': 'Korean'
+}
+
 @app.route('/translate', methods=['POST'])
 def translate_text():
-    """Translate English text to Kannada"""
+    """Translate text between languages"""
     try:
         data = request.json
-        english_text = data.get('text', '')
+        text = data.get('text', '')
+        source_lang = data.get('source_lang', 'en')
+        target_lang = data.get('target_lang', 'kn')
         
-        if not english_text:
+        if not text:
             return jsonify({'error': 'No text provided'}), 400
         
+        # Validate language codes
+        if source_lang not in SUPPORTED_LANGUAGES or target_lang not in SUPPORTED_LANGUAGES:
+            return jsonify({'error': 'Unsupported language'}), 400
+        
         # Use MyMemory Translation API (free, no API key required)
-        kannada_text = translate_via_mymemory(english_text)
+        translated_text = translate_via_mymemory(text, source_lang, target_lang)
         
         return jsonify({
             'success': True,
-            'english': english_text,
-            'kannada': kannada_text
+            'original': text,
+            'translated': translated_text,
+            'source_language': SUPPORTED_LANGUAGES[source_lang],
+            'target_language': SUPPORTED_LANGUAGES[target_lang]
         })
     
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def translate_via_mymemory(text):
+def translate_via_mymemory(text, source_lang, target_lang):
     """Translation using MyMemory API (free)"""
     try:
         url = "https://api.mymemory.translated.net/get"
+        langpair = f"{source_lang}|{target_lang}"
         params = {
             'q': text,
-            'langpair': 'en|kn'
+            'langpair': langpair
         }
         response = requests.get(url, params=params, timeout=10)
         result = response.json()
@@ -50,10 +82,17 @@ def translate_via_mymemory(text):
         print(f"Translation error: {e}")
         return text
 
+@app.route('/languages', methods=['GET'])
+def get_languages():
+    """Get list of supported languages"""
+    return jsonify({
+        'languages': SUPPORTED_LANGUAGES
+    })
+
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
     return jsonify({'status': 'healthy'})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)
