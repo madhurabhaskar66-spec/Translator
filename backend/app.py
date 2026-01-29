@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import requests
 import os
@@ -31,6 +31,11 @@ SUPPORTED_LANGUAGES = {
     'zh': 'Chinese',
     'ko': 'Korean'
 }
+
+@app.route('/')
+def index():
+    """Serve the index.html template"""
+    return render_template('index.html')
 
 @app.route('/translate', methods=['POST'])
 def translate_text():
@@ -95,4 +100,4 @@ def health():
     return jsonify({'status': 'healthy'})
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host='0.0.0.0', port=5000)

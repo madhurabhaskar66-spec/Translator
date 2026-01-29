@@ -687,7 +687,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://127.0.0.1:5000';
+        const API_URL = '';
         let currentMode = 'text-to-text';
         let mediaRecorder = null;
         let audioChunks = [];
@@ -866,8 +866,7 @@
                         text: sourceText,
                         source_lang: sourceLang,
                         target_lang: targetLang
-                    }),
-                    mode: 'cors'
+                    })
                 });
 
                 if (!response.ok) {
@@ -1067,18 +1066,18 @@
         });
 
         function checkBackendConnection() {
-            fetch(`${API_URL}/health`, { mode: 'cors' })
+            fetch(`${API_URL}/health`)
                 .then(response => {
                     if (response.ok) {
                         console.log('✓ Backend connected successfully');
-                        showMessage('message-target', 'Serving HTTP on 0.0.0.0 port 8000 ✅', 'success');
+                        showMessage('message-target', 'Backend connected ✅', 'success');
                     } else {
                         throw new Error('Backend error');
                     }
                 })
                 .catch(error => {
                     console.error('Backend connection error:', error);
-                    showMessage('message-target', '⚠️ Cannot connect to backend. Make sure the server is running on port 5000', 'error');
+                    showMessage('message-target', '⚠️ Cannot connect to backend', 'error');
                 });
         }
     </script>
