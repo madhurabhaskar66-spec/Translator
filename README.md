@@ -1,10 +1,10 @@
-# English to Kannada Translator with Text-to-Speech
+# Multilingual Translator with Text-to-Speech
 
 A fullstack translator application that converts English text to Kannada with integrated text-to-speech functionality.
 
 ## Features
 
-- 🌐 **English to Kannada Translation** - Real-time translation using MyMemory API
+- 🌐 **Multilingual Translation** - Real-time translation using MyMemory API
 - 🔊 **Text-to-Speech** - Listen to both English and Kannada pronunciations
 - 📋 **Copy to Clipboard** - Easy sharing of translations
 - 🎨 **Modern UI** - Clean, responsive interface
