@@ -2,6 +2,8 @@
 
 A fullstack translator application that converts English text to Kannada with integrated text-to-speech functionality.
 
+link: https://translator-5-69ji.onrender.com
+
 ## Features
 
 - 🌐 **Multilingual Translation** - Real-time translation using MyMemory API
